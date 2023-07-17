@@ -34,7 +34,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Passwords do not match.")
 
         user = UserModel(**data)
-
         errors = dict()
         try:
             password_validation.validate_password(password=password, user=user)
