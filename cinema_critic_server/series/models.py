@@ -1,5 +1,9 @@
 from django.core import validators
 from django.db import models
+from django.utils import timezone
+
+from cinema_critic_server.common.models import Genre
+
 
 # Create your models here.
 class Series(models.Model):
@@ -22,9 +26,7 @@ class Series(models.Model):
         blank=True,
         null=True
     )
-    genres = models.CharField(
-        max_length=30
-    )
+    genres = models.ManyToManyField(Genre)
     trailer = models.URLField()
     image = models.URLField()
     length = models.CharField(
@@ -32,3 +34,7 @@ class Series(models.Model):
     )
     seasons = models.IntegerField()
     episodes = models.IntegerField()
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        null=True,
+        blank=True)
