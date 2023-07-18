@@ -18,11 +18,12 @@ class RegisterUserView(generics.CreateAPIView):
     serializer_class = RegisterUserSerializer
 
 
-class LoginUserView(generics.GenericAPIView):
+class LoginUserView(APIView):
     serializer_class = LoginUserSerializer
     queryset = UserModel.objects.all()
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -54,7 +55,7 @@ class DetailsUserView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         try:
-            # Specify the algorithm as a list of strings
+            # the algorithm has to be passed like a list here, because of the format that decode uses
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')

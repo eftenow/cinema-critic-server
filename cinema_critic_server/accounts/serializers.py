@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model, password_validation
-from django.core import exceptions
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
@@ -12,19 +12,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('username', 'email', 'password', 'repeat_password')
-
-    def create(self, validated_data):
-        validated_data.pop('repeat_password', None)
-        user = super().create(validated_data)
-
-        password = validated_data.get('password')
-        user.set_password(password)
-        user.save()
-
-        return user
-
-    def to_representation(self, instance):
-        return {}
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
 
     def validate(self, data):
         password = data.get('password')
@@ -33,18 +23,24 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         if password and repeat_password and password != repeat_password:
             raise serializers.ValidationError("Passwords do not match.")
 
-        user = UserModel(**data)
-        errors = dict()
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('repeat_password', None)
+
+        user = super().create(validated_data)
+
+        # Trigger the Django password validators
+        password = validated_data.get('password')
         try:
-            password_validation.validate_password(password=password, user=user)
+            validate_password(password, user=user)
+        except ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
 
-        except exceptions.ValidationError as e:
-            errors['password'] = list(e.messages)
+        user.set_password(password)
+        user.save()
 
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return super().validate(data)
+        return user
 
 
 class LoginUserSerializer(serializers.Serializer):
