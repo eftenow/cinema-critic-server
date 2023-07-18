@@ -5,6 +5,8 @@ from django.contrib.auth.models import PermissionsMixin
 
 from cinema_critic_server.accounts.managers import AppUserManager
 from cinema_critic_server.accounts.validators import name_contains_only_letters
+from cinema_critic_server.movies.models import Movie
+from cinema_critic_server.series.models import Series
 
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
@@ -83,8 +85,8 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         primary_key=True
     )
-    # bookmarked_movies = models.ManyToManyField(Movie, related_name='bookmarked_by', blank=True)
-    # bookmarked_series = models.ManyToManyField(Series, related_name='bookmarked_by', blank=True)
+    bookmarked_movies = models.ManyToManyField(Movie, related_name='bookmarked_by', blank=True)
+    bookmarked_series = models.ManyToManyField(Series, related_name='bookmarked_by', blank=True)
     def get_full_name(self):
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'
