@@ -1,7 +1,9 @@
-from django.contrib.auth import get_user_model, password_validation
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
+
+from cinema_critic_server.accounts.validators import validate_repeat_password_is_equal
 
 UserModel = get_user_model()
 
@@ -17,30 +19,18 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
+        user = data.get('user')
         password = data.get('password')
-        repeat_password = data.get('repeat_password')
+        repeat_password = data.pop('repeat_password')
 
-        if password and repeat_password and password != repeat_password:
-            raise serializers.ValidationError("Passwords do not match.")
-
-        return data
-
-    def create(self, validated_data):
-        validated_data.pop('repeat_password', None)
-
-        user = super().create(validated_data)
-
-        # Trigger the Django password validators
-        password = validated_data.get('password')
         try:
             validate_password(password, user=user)
+            validate_repeat_password_is_equal(password, repeat_password)
         except ValidationError as e:
             raise serializers.ValidationError({'password': list(e.messages)})
 
-        user.set_password(password)
-        user.save()
+        return data
 
-        return user
 
 
 class LoginUserSerializer(serializers.Serializer):

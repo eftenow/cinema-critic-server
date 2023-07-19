@@ -1,13 +1,13 @@
+import jwt
 from django.contrib.auth import get_user_model, authenticate
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
-import jwt, datetime
-
+from cinema_critic_server.accounts.generate_jwt_token import generate_jwt_token
 from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, UserDetailsSerializer
-from cinema_critic_server.accounts.view_validators import check_valid_login_data, check_if_all_fields_are_filled
+from cinema_critic_server.accounts.view_validators import authenticate_user
 
 UserModel = get_user_model()
 
@@ -17,27 +17,32 @@ class RegisterUserView(generics.CreateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = RegisterUserSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+
+        user.set_password(serializer.validated_data['password'])
+        user.save()
+
+        login_view = LoginUserView()
+        response = login_view.post(request)
+
+        return response
+
 
 class LoginUserView(APIView):
-    serializer_class = LoginUserSerializer
     queryset = UserModel.objects.all()
+    serializer_class = LoginUserSerializer
 
     @staticmethod
     def post(request):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        check_if_all_fields_are_filled(username, password)
-        user = check_valid_login_data(request, username, password)
-
-        payload = {
-            'id': user.id,
-            'username': user.username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        user = authenticate_user(request, username, password)
+        token = generate_jwt_token(user)
 
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -67,7 +72,7 @@ class DetailsUserView(APIView):
 
 class LogoutUserView(APIView):
     def post(self, request):
-        response = Response()
+        response = Response(status=status.HTTP_200_OK)
         response.delete_cookie('jwt')
         response.data = {
             'message': 'success'
