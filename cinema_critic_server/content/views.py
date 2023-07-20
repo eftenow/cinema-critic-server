@@ -14,27 +14,30 @@ class MovieListCreateView(ListCreateAPIView):
         return MovieReadSerializer
 
 
-class MovieRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class MovieDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'PUT':
-            return MovieCreateEditSerializer
-        return MovieReadSerializer
+        if self.request.method == 'GET':
+            return MovieReadSerializer
+        return MovieCreateEditSerializer
 
 
-class SeriesListCreateView(ListCreateAPIView):
+#####
+
+class SeriestListCreateView(ListCreateAPIView):
     queryset = Series.objects.all()
+
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return SeriesCreateEditSerializer
         return SeriesReadSerializer
 
 
-class SeriesRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class SeriesDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Series.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'PUT':
-            return SeriesCreateEditSerializer
-        return SeriesReadSerializer
+        if self.request.method == 'GET':
+            return SeriesReadSerializer
+        return SeriesCreateEditSerializer
