@@ -3,8 +3,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from cinema_critic_server.movies.models import Movie
-from cinema_critic_server.series.models import Series
 
 UserModel = get_user_model()
 

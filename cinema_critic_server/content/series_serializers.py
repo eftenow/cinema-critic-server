@@ -1,13 +1,10 @@
 from rest_framework import serializers
 
 from cinema_critic_server.common.models import Genre
-from cinema_critic_server.common.serializers import GenreSerializer
-from cinema_critic_server.series.models import Series
+from cinema_critic_server.content.models import Series
 
 
 class SeriesReadSerializer(serializers.ModelSerializer):
-    genres = GenreSerializer(many=True, read_only=True)
-
     class Meta:
         model = Series
         fields = ['id', 'name', 'year', 'rating', 'director', 'stars', 'visits', 'genres', 'trailer', 'image', 'length',

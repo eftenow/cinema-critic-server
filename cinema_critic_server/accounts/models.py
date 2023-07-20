@@ -5,8 +5,8 @@ from django.contrib.auth.models import PermissionsMixin
 
 from cinema_critic_server.accounts.managers import AppUserManager
 from cinema_critic_server.accounts.validators import name_contains_only_letters
-from cinema_critic_server.movies.models import Movie
-from cinema_critic_server.series.models import Series
+from cinema_critic_server.content.models import Movie
+from cinema_critic_server.content.models import Series
 
 
 class AppUser(AbstractBaseUser, PermissionsMixin):

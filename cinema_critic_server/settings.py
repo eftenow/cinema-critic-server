@@ -33,9 +33,9 @@ INSTALLED_APPS = [
 
     'cinema_critic_server.accounts',
     'cinema_critic_server.common',
-    'cinema_critic_server.movies',
+    'cinema_critic_server.content',
     'cinema_critic_server.reviews',
-    'cinema_critic_server.series'
+
 ]
 
 MIDDLEWARE = [

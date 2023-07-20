@@ -4,5 +4,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('cinema_critic_server.accounts.urls')),
+    path('dashboard/', include('cinema_critic_server.content.urls')),
+
 
 ]

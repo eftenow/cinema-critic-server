@@ -22,4 +22,4 @@ class Genre(models.Model):
     )
 
     def __str__(self):
-        return ', '.join(self.name)
+        return self.name
