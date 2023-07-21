@@ -6,7 +6,7 @@ class FilterSortMixin:
         if genres:
             genres = genres.split(',')
             for genre in genres:
-                queryset = queryset.filter(genres__name=genre)
+                queryset = queryset.filter(genres__name=genre) # chain filters
 
         sort = self.request.query_params.get('sort')
         if sort:
@@ -19,4 +19,5 @@ class FilterSortMixin:
             elif sort.lower() == 'lowest_rating':
                 queryset = queryset.order_by('rating')
         # http://127.0.0.1:8000/dashboard/series/?genres=comedy,action&sort=newest
-        return queryset
+
+        return queryset.distinct()
