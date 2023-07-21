@@ -5,10 +5,11 @@ from cinema_critic_server.content.models import Movie
 
 
 class MovieReadSerializer(serializers.ModelSerializer):
+    genres = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = Movie
         fields = ['id', 'name', 'year', 'rating', 'director', 'stars', 'visits', 'genres', 'trailer', 'image', 'length',
-                  'created_at']
+                  'created_at', 'slug']
 
 
 class MovieCreateEditSerializer(serializers.ModelSerializer):

@@ -1,11 +1,12 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
+from cinema_critic_server.content.filtration_mixin import FilterSortMixin
 from cinema_critic_server.content.models import Movie, Series
 from cinema_critic_server.content.movies_serializers import MovieReadSerializer, MovieCreateEditSerializer
 from cinema_critic_server.content.series_serializers import SeriesCreateEditSerializer, SeriesReadSerializer
 
 
-class MovieListCreateView(ListCreateAPIView):
+class MovieListCreateView(FilterSortMixin, ListCreateAPIView):
     queryset = Movie.objects.all()
 
     def get_serializer_class(self):
@@ -25,7 +26,7 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
 #####
 
-class SeriestListCreateView(ListCreateAPIView):
+class SeriesListCreateView(FilterSortMixin, ListCreateAPIView):
     queryset = Series.objects.all()
 
     def get_serializer_class(self):
