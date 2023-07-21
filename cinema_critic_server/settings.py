@@ -52,10 +52,15 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'cinema_critic_server.accounts.jwt_token.jwt_cookie_authentication.CookieJWTAuthentication',
 
-    ],
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),
 }
 
 ROOT_URLCONF = 'cinema_critic_server.urls'

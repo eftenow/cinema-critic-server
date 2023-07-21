@@ -1,18 +1,19 @@
 import jwt
-from django.contrib.auth import get_user_model, authenticate
-from rest_framework import generics, serializers, status
+from django.contrib.auth import get_user_model
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
-from cinema_critic_server.accounts.generate_jwt_token import generate_jwt_token
 from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, UserDetailsSerializer
 from cinema_critic_server.accounts.view_validators import authenticate_user
 
 UserModel = get_user_model()
 
-
 # Create your views here.
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 class RegisterUserView(generics.CreateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = RegisterUserSerializer
@@ -26,9 +27,15 @@ class RegisterUserView(generics.CreateAPIView):
         user.set_password(serializer.validated_data['password'])
         user.save()
 
-        login_view = LoginUserView()
-        response = login_view.post(request)
+        tokens = RefreshToken.for_user(user)
 
+        response = Response()
+        response.set_cookie(key='refresh', value=str(tokens), httponly=True)
+        response.set_cookie(key='access', value=str(tokens.access_token), httponly=True)
+        response.data = {
+            'refresh': str(tokens),
+            'access': str(tokens.access_token),
+        }
         return response
 
 
@@ -42,30 +49,24 @@ class LoginUserView(APIView):
         password = request.data.get('password')
 
         user = authenticate_user(request, username, password)
-        token = generate_jwt_token(user)
+        tokens = RefreshToken.for_user(user)
 
         response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.set_cookie(key='refresh', value=str(tokens), httponly=True)
+        response.set_cookie(key='access', value=str(tokens.access_token), httponly=True)
         response.data = {
-            'jwt': token
+            'refresh': str(tokens),
+            'access': str(tokens.access_token),
         }
         return response
 
 
 class DetailsUserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('jwt')
-
-        if not token:
+        user = request.user
+        if user.is_anonymous:
             raise AuthenticationFailed('Unauthenticated!')
 
-        try:
-            # the algorithm has to be passed like a list here, because of the format that decode uses
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        user = UserModel.objects.filter(id=payload['id']).first()
         serializer = UserDetailsSerializer(user)
         return Response(serializer.data)
 
@@ -73,7 +74,8 @@ class DetailsUserView(APIView):
 class LogoutUserView(APIView):
     def post(self, request):
         response = Response(status=status.HTTP_200_OK)
-        response.delete_cookie('jwt')
+        response.delete_cookie('refresh')
+        response.delete_cookie('access')
         response.data = {
             'message': 'success'
         }
