@@ -6,7 +6,6 @@ from django.utils import timezone
 from cinema_critic_server.common.models import Genre
 
 
-# Create your models here.
 class Content(models.Model):
     name = models.CharField(max_length=30)
     year = models.IntegerField(validators=[validators.MinValueValidator(1900)])

@@ -1,11 +1,5 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
-import jwt
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.authentication import JWTAuthentication
-
-UserModel = get_user_model()
-
-from django.conf import settings
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 
 class CookieJWTAuthentication(JWTAuthentication):
@@ -16,8 +10,7 @@ class CookieJWTAuthentication(JWTAuthentication):
             if raw_token is None:
                 return None
 
-            payload = jwt.decode(raw_token, settings.SECRET_KEY, algorithms=['HS256'])
-
-            return (UserModel.objects.filter(id=payload['user_id']).first(), raw_token)
+            validated_token = self.get_validated_token(raw_token)
+            return self.get_user(validated_token), validated_token
 
         return super().authenticate(request)
