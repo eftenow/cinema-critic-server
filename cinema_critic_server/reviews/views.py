@@ -14,6 +14,8 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         content_type = ContentType.objects.get(model=self.request.data['content_type'])
         serializer.save(user=self.request.user, content_type=content_type)
+        instance = serializer.instance
+        instance.content_object.update_rating()
 
 
 class UserReviewListView(generics.ListAPIView):

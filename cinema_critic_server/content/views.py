@@ -48,10 +48,6 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     pagination_class = MoviesSeriesPaginator
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return sorted(queryset, key=lambda x: x.created_at, reverse=True)
-
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return MovieReadSerializer
