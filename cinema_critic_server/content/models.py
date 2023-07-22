@@ -9,7 +9,6 @@ from django.utils import timezone
 from cinema_critic_server.common.models import Genre
 
 
-
 class Content(models.Model):
     name = models.CharField(max_length=30)
     year = models.IntegerField(validators=[validators.MinValueValidator(1900)])
@@ -44,6 +43,11 @@ class Content(models.Model):
         else:
             self.rating = None
         self.save()
+
+    def update_visits_count(self):
+        self.visits += 1
+        self.save()
+
 
 class Movie(Content):
     pass

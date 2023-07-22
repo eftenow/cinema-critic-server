@@ -1,7 +1,9 @@
 from itertools import chain
 
+from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 
 from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin
 from cinema_critic_server.content.models import Movie, Series
@@ -55,6 +57,12 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
             return MovieReadSerializer
         return MovieCreateEditSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.update_visits_count()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 """"Series views"""
 
@@ -76,3 +84,9 @@ class SeriesDetailView(RetrieveUpdateDestroyAPIView):
         if self.request.method == 'GET':
             return SeriesReadSerializer
         return SeriesCreateEditSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.update_visits_count()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
