@@ -1,6 +1,7 @@
 from itertools import chain
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin
 from cinema_critic_server.content.models import Movie, Series
@@ -33,6 +34,7 @@ class ContentListView(FilterSortMixin, ListAPIView):
 class MovieListCreateView(FilterSortMixin, ListCreateAPIView):
     queryset = Movie.objects.all()
     pagination_class = MoviesSeriesPaginator
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -59,6 +61,7 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
 class SeriesListCreateView(FilterSortMixin, ListCreateAPIView):
     queryset = Series.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
