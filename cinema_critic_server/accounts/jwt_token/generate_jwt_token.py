@@ -1,5 +1,7 @@
 import jwt, datetime
 
+from cinema_critic_server import settings
+
 
 def generate_jwt_token(user):
     payload = {
@@ -9,5 +11,5 @@ def generate_jwt_token(user):
         'iat': datetime.datetime.utcnow()
     }
 
-    token = jwt.encode(payload, 'secret', algorithm='HS256')
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
     return token

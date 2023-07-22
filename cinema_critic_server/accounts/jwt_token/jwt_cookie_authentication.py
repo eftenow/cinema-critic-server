@@ -5,6 +5,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 UserModel = get_user_model()
 
+from django.conf import settings
+
+
 class CookieJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         header = self.get_header(request)
@@ -13,7 +16,7 @@ class CookieJWTAuthentication(JWTAuthentication):
             if raw_token is None:
                 return None
 
-            payload = jwt.decode(raw_token, 'secret', algorithms=['HS256'])
+            payload = jwt.decode(raw_token, settings.SECRET_KEY, algorithms=['HS256'])
 
             return (UserModel.objects.filter(id=payload['user_id']).first(), raw_token)
 
