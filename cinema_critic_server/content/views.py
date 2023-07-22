@@ -4,9 +4,9 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 
 from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin
 from cinema_critic_server.content.models import Movie, Series
-from cinema_critic_server.content.movies_serializers import MovieReadSerializer, MovieCreateEditSerializer
 from cinema_critic_server.content.pagination import MoviesSeriesPaginator
 from cinema_critic_server.content.serializers.serializers_content import ContentSerializer
+from cinema_critic_server.content.serializers.serializers_movies import MovieCreateEditSerializer, MovieReadSerializer
 from cinema_critic_server.content.serializers.serializers_series import SeriesCreateEditSerializer, SeriesReadSerializer
 
 """"Movies + Series views"""

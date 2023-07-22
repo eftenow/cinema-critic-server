@@ -34,3 +34,21 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
         if request.method == 'PUT' or request.method == 'DELETE':
             if request.user != obj.user:
                 raise PermissionDenied('You can not edit this review')
+
+
+class MovieReviewListView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        movie_id = self.kwargs['id']
+        content_type = ContentType.objects.get(model='movie')
+        return Review.objects.filter(content_type=content_type, object_id=movie_id)
+
+
+class SeriesReviewListView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        series_id = self.kwargs['id']
+        content_type = ContentType.objects.get(model='series')
+        return Review.objects.filter(content_type=content_type, object_id=series_id)

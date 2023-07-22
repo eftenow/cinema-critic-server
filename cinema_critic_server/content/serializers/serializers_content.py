@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from cinema_critic_server.content.models import Movie, Series
-from cinema_critic_server.content.movies_serializers import MovieReadSerializer
+from cinema_critic_server.content.serializers.serializers_movies import MovieReadSerializer
+
 from cinema_critic_server.content.serializers.serializers_series import SeriesReadSerializer
 
 
