@@ -83,10 +83,12 @@ class Profile(models.Model):
     user = models.OneToOneField(
         AppUser,
         on_delete=models.CASCADE,
-        primary_key=True
+        primary_key=True,
+        related_name='profile'
     )
     bookmarked_movies = models.ManyToManyField(Movie, related_name='bookmarked_by', blank=True)
     bookmarked_series = models.ManyToManyField(Series, related_name='bookmarked_by', blank=True)
+
     def get_full_name(self):
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'

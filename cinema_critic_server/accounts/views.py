@@ -1,11 +1,16 @@
 import jwt
 from django.contrib.auth import get_user_model
+from django.http import Http404
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
-from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, UserDetailsSerializer
+from cinema_critic_server.accounts.custom_permissions.is_owner import IsOwner
+from cinema_critic_server.accounts.models import Profile
+from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, \
+    UserDetailsSerializer, EditUserSerializer
 from cinema_critic_server.accounts.view_validators import authenticate_user
 
 UserModel = get_user_model()
@@ -62,10 +67,16 @@ class LoginUserView(APIView):
 
 
 class DetailsUserView(APIView):
-    def get(self, request):
-        user = request.user
-        if user.is_anonymous:
-            raise AuthenticationFailed('Unauthenticated!')
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                user = UserModel.objects.get(pk=pk)
+            except UserModel.DoesNotExist:
+                raise Http404
+        else:
+            user = request.user
+            if user.is_anonymous:
+                raise AuthenticationFailed('Unauthenticated!')
 
         serializer = UserDetailsSerializer(user)
         return Response(serializer.data)
@@ -80,3 +91,13 @@ class LogoutUserView(APIView):
             'message': 'success'
         }
         return response
+
+
+class EditUserProfileView(generics.UpdateAPIView):
+    serializer_class = EditUserSerializer
+    lookup_field = 'pk'
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_object(self):
+        return self.request.user
+
