@@ -37,9 +37,8 @@ class Content(models.Model):
         print(f'Ratings: {ratings}')
         if ratings:
             average = sum(ratings) / Decimal(len(ratings))
-            average = average.quantize(Decimal('0.00'))  # rounding to 2 decimal places
-            print(f'Average: {average}')
-            self.rating = average
+
+            self.rating = Decimal(average)
         else:
             self.rating = None
         self.save()

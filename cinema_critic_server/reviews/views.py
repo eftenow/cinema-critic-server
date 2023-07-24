@@ -38,3 +38,19 @@ class ReviewDetailsEditDeleteView(generics.RetrieveUpdateDestroyAPIView):
                 raise PermissionDenied('You can not edit this review')
 
 
+class MovieReviewsListView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        movie_id = self.kwargs['id']
+        content_type = ContentType.objects.get(model='movie')
+        return Review.objects.filter(content_type=content_type, object_id=movie_id)
+
+
+class SeriesReviewsListView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        series_id = self.kwargs['id']
+        content_type = ContentType.objects.get(model='series')
+        return Review.objects.filter(content_type=content_type, object_id=series_id)

@@ -1,14 +1,14 @@
 class FilterSortMixin:
-    def get_queryset(self):
-        queryset = super().get_queryset()
+    def get_filtered_sorted_queryset(self, queryset):
 
         genres = self.request.query_params.get('genres')
         if genres:
             genres = genres.split(',')
             for genre in genres:
-                queryset = queryset.filter(genres__name=genre) # chain filters
+                queryset = queryset.filter(genres__name=genre)
 
         sort = self.request.query_params.get('sort')
+        print('before', queryset)
         if sort:
             if sort.lower() == 'newest':
                 queryset = queryset.order_by('-created_at')
@@ -18,6 +18,5 @@ class FilterSortMixin:
                 queryset = queryset.order_by('-rating')
             elif sort.lower() == 'lowest_rating':
                 queryset = queryset.order_by('rating')
-        # http://127.0.0.1:8000/dashboard/series/?genres=comedy,action&sort=newest
 
         return queryset.distinct()

@@ -20,12 +20,14 @@ class ContentListView(FilterSortMixin, ListAPIView):
     pagination_class = MoviesSeriesPaginator
 
     def get_queryset(self):
-        movies = Movie.objects.all()
-        series = Series.objects.all()
+        movie_queryset = Movie.objects.all()
+        series_queryset = Series.objects.all()
 
-        # using "chain" instead of movies + series, because they're of type QuerySet and do not support the '+' operator
-        content = list(chain(movies, series))
-        content.sort(key=lambda x: x.created_at, reverse=True)
+        # the get_filtered_sorted_queryset comes from the custom mixin that is inherited
+        filtered_sorted_movies = self.get_filtered_sorted_queryset(movie_queryset)
+        filtered_sorted_series = self.get_filtered_sorted_queryset(series_queryset)
+
+        content = list(chain(filtered_sorted_movies, filtered_sorted_series))
 
         return content
 
