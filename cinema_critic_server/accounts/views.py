@@ -82,6 +82,20 @@ class DetailsUserView(APIView):
         return Response(serializer.data)
 
 
+class EditUserProfileView(generics.UpdateAPIView):
+    serializer_class = EditUserSerializer
+    lookup_field = 'pk'
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_object(self):
+        return self.request.user
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
 class LogoutUserView(APIView):
     def post(self, request):
         response = Response(status=status.HTTP_200_OK)
@@ -91,13 +105,3 @@ class LogoutUserView(APIView):
             'message': 'success'
         }
         return response
-
-
-class EditUserProfileView(generics.UpdateAPIView):
-    serializer_class = EditUserSerializer
-    lookup_field = 'pk'
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def get_object(self):
-        return self.request.user
-

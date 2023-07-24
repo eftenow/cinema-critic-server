@@ -38,19 +38,21 @@ class LoginUserSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
 
-class UserDetailsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserModel
-        fields = ['id', 'username', 'email', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
-
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'profile_picture', 'gender', 'city', 'country', 'description']
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer()
+
+    class Meta:
+        model = UserModel
+        fields = ['id', 'username', 'email', 'password', 'profile']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 
 class EditUserSerializer(serializers.ModelSerializer):
@@ -70,7 +72,7 @@ class EditUserSerializer(serializers.ModelSerializer):
         so  i have to do it manually, since i have my custom 'AppUser' which only
         contains the auth user data, and and additional Model, called 'Profile'
         which holds all the other information regarding the user profile, such as
-        first_name, last_name, profile_picture and so on...
+        first_name, last_name, profile_picture, gender and so on...
         """
         instance.email = validated_data.get('email', instance.email)
         instance.save()
