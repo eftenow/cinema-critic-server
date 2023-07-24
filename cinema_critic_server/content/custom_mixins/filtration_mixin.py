@@ -8,7 +8,7 @@ class FilterSortMixin:
                 queryset = queryset.filter(genres__name=genre)
 
         sort = self.request.query_params.get('sort')
-        print('before', queryset)
+
         if sort:
             if sort.lower() == 'newest':
                 queryset = queryset.order_by('-created_at')
