@@ -9,6 +9,12 @@ from cinema_critic_server.accounts.validators import validate_repeat_password_is
 UserModel = get_user_model()
 
 
+class UsersListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ['username', 'email']
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     repeat_password = serializers.CharField(write_only=True)
 

@@ -1,9 +1,10 @@
 from django.urls import path
 
 from cinema_critic_server.accounts.views import RegisterUserView, LoginUserView, LogoutUserView, DetailsUserView, \
-    EditUserProfileView, CheckUserIsAuthenticatedView
+    EditUserProfileView, CheckUserIsAuthenticatedView, AllUsersListView
 
 urlpatterns = [
+    path('allUsers/', AllUsersListView.as_view(), name='get_all_users'),
     path('register/', RegisterUserView.as_view(), name='user_register'),
     path('login/', LoginUserView.as_view(), name='user_login'),
     path('logout/', LogoutUserView.as_view(), name='current_user_logout'),

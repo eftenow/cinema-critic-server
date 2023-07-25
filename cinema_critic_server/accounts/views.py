@@ -10,13 +10,19 @@ from rest_framework.exceptions import AuthenticationFailed
 from cinema_critic_server.accounts.custom_permissions.is_owner import IsOwner
 from cinema_critic_server.accounts.models import Profile
 from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, \
-    UserDetailsSerializer, EditUserSerializer
+    UserDetailsSerializer, EditUserSerializer, UsersListSerializer
 from cinema_critic_server.accounts.view_validators import authenticate_user
 
 UserModel = get_user_model()
 
 # Create your views here.
 from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class AllUsersListView(generics.ListAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UsersListSerializer
+
 
 class RegisterUserView(generics.CreateAPIView):
     queryset = UserModel.objects.all()
