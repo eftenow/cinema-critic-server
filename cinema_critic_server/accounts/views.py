@@ -18,7 +18,6 @@ UserModel = get_user_model()
 # Create your views here.
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
 class RegisterUserView(generics.CreateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = RegisterUserSerializer
@@ -105,3 +104,10 @@ class LogoutUserView(APIView):
             'message': 'success'
         }
         return response
+
+
+class CheckUserIsAuthenticatedView(APIView):
+
+    def get(self, request):
+        is_authenticated = request.user.is_authenticated
+        return Response({'isAuthenticated': is_authenticated})
