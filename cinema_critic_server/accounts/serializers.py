@@ -12,7 +12,7 @@ UserModel = get_user_model()
 class UsersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ['username', 'email']
+        fields = ['id', 'username', 'email']
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):

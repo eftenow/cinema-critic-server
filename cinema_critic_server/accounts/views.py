@@ -101,6 +101,13 @@ class EditUserProfileView(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class DeleteUserView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user  # ensures that only the account can delete the account
+
+
 class LogoutUserView(APIView):
     def post(self, request):
         response = Response(status=status.HTTP_200_OK)
