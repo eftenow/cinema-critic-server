@@ -5,7 +5,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin
+from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin, ContentSortMixin
 from cinema_critic_server.content.models import Movie, Series
 from cinema_critic_server.content.pagination import MoviesSeriesPaginator
 from cinema_critic_server.content.serializers.serializers_content import ContentSerializer
@@ -15,7 +15,7 @@ from cinema_critic_server.content.serializers.serializers_series import SeriesCr
 """"Movies + Series views"""
 
 
-class ContentListView(FilterSortMixin, ListAPIView):
+class ContentListView(ContentSortMixin, FilterSortMixin, ListAPIView):
     serializer_class = ContentSerializer
     pagination_class = MoviesSeriesPaginator
 
@@ -27,9 +27,12 @@ class ContentListView(FilterSortMixin, ListAPIView):
         filtered_sorted_movies = self.get_filtered_sorted_queryset(movie_queryset)
         filtered_sorted_series = self.get_filtered_sorted_queryset(series_queryset)
 
-        content = list(chain(filtered_sorted_movies, filtered_sorted_series))
+        filtered_content = list(chain(list(filtered_sorted_movies), list(filtered_sorted_series)))
 
-        return content
+        sort_param = self.request.query_params.get('sort')
+        sorted_and_filtered_content = self.sort_all_content(filtered_content, sort_param)
+
+        return sorted_and_filtered_content
 
 
 """"Movie views"""

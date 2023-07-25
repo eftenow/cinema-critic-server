@@ -4,7 +4,7 @@ from cinema_critic_server.content.views import MovieListCreateView, MovieDetailV
     SeriesDetailView, ContentListView
 
 urlpatterns = [
-    path('', ContentListView.as_view(), name='content_list'),
+    path('all/', ContentListView.as_view(), name='content_list'),
     # responsible for returning both movies and series at once
 
     path('movies/', MovieListCreateView.as_view(), name='movies_list_create'),
