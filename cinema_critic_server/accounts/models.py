@@ -65,18 +65,20 @@ class Profile(models.Model):
 
     city = models.CharField(
         max_length=20,
+        validators=[validators.MinLengthValidator(MIN_NAME_LEN)],
         null=True,
         blank=True,
     )
 
     country = models.CharField(
         max_length=20,
+        validators=[validators.MinLengthValidator(MIN_NAME_LEN)],
         null=True,
         blank=True,
     )
 
     description = models.TextField(
-        max_length=100,
+        max_length=50,
         null=True,
         blank=True,
     )

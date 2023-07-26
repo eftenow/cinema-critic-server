@@ -23,6 +23,7 @@ class Content(models.Model):
     trailer = models.URLField()
     image = models.URLField()
     length = models.CharField(max_length=50)
+    description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     class Meta:
