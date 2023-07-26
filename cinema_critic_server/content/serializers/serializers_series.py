@@ -10,7 +10,7 @@ class SeriesReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Series
         fields = ['id', 'name', 'year', 'rating', 'director', 'stars', 'visits', 'genres', 'trailer', 'image', 'length',
-                  'seasons', 'episodes', 'created_at', 'slug']
+                  'seasons', 'episodes', 'created_at', 'slug', 'description']
 
 
 class SeriesCreateEditSerializer(serializers.ModelSerializer):
@@ -23,4 +23,4 @@ class SeriesCreateEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = Series
         fields = ['id', 'name', 'year', 'director', 'stars', 'genres', 'trailer', 'image', 'length',
-                  'seasons', 'episodes']
+                  'seasons', 'episodes', 'description']
