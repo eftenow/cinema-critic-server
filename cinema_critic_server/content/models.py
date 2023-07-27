@@ -10,8 +10,8 @@ from cinema_critic_server.common.models import Genre
 
 
 class Content(models.Model):
-    name = models.CharField(max_length=40)
-    year = models.IntegerField(validators=[validators.MinValueValidator(1900)])
+    name = models.CharField(max_length=40, validators=[validators.MinLengthValidator(2)])
+    year = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1900)])
     rating = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True,
                                  validators=[validators.MinValueValidator(1),
                                              validators.MaxValueValidator(10)])
@@ -21,7 +21,7 @@ class Content(models.Model):
     slug = models.SlugField(unique=True, editable=False, null=True)
     genres = models.ManyToManyField(Genre)
     trailer = models.URLField()
-    image = models.URLField()
+    image = models.URLField(null=False, blank=False)
     length = models.CharField(max_length=50)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
@@ -54,5 +54,5 @@ class Movie(Content):
 
 
 class Series(Content):
-    seasons = models.IntegerField()
-    episodes = models.IntegerField()
+    seasons = models.PositiveIntegerField(null=False, blank=False)
+    episodes = models.PositiveIntegerField(null=False, blank=False)
