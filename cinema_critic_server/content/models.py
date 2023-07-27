@@ -10,13 +10,13 @@ from cinema_critic_server.common.models import Genre
 
 
 class Content(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=40)
     year = models.IntegerField(validators=[validators.MinValueValidator(1900)])
     rating = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True,
                                  validators=[validators.MinValueValidator(1),
                                              validators.MaxValueValidator(10)])
-    director = models.CharField(max_length=30)
-    stars = models.CharField(max_length=60)
+    director = models.CharField(max_length=30, validators=[validators.MinLengthValidator(2)])
+    stars = models.CharField(max_length=60, validators=[validators.MinLengthValidator(2)])
     visits = models.IntegerField(blank=True, null=True, default=0)
     slug = models.SlugField(unique=True, editable=False, null=True)
     genres = models.ManyToManyField(Genre)

@@ -3,6 +3,8 @@ from itertools import chain
 from rest_framework import generics
 from rest_framework.response import Response
 
+from cinema_critic_server.common.models import Genre
+from cinema_critic_server.common.serializers import GenreSerializer
 from cinema_critic_server.content.models import Movie, Series
 from cinema_critic_server.content.serializers.serializers_movies import MovieReadSerializer
 from cinema_critic_server.content.serializers.serializers_series import SeriesReadSerializer
@@ -27,3 +29,8 @@ class ContentSearchListView(generics.ListAPIView):
             'movies': movie_serializer.data,
             'series': series_serializer.data,
         })
+
+
+class GenresListView(generics.ListAPIView):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
