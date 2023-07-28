@@ -120,7 +120,8 @@ class LogoutUserView(APIView):
 
 
 class CheckUserIsAuthenticatedView(APIView):
-
     def get(self, request):
-        is_authenticated = request.user.is_authenticated
+        is_authenticated = False
+        if request.user:
+            is_authenticated = request.user.is_authenticated
         return Response({'isAuthenticated': is_authenticated})
