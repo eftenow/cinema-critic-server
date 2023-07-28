@@ -7,11 +7,13 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 from cinema_critic_server.common.models import Genre
+from cinema_critic_server.content.validators import validate_current_year
 
 
 class Content(models.Model):
     name = models.CharField(max_length=40, validators=[validators.MinLengthValidator(2)])
-    year = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1900)])
+    year = models.IntegerField(null=False, blank=False,
+                               validators=[validators.MinValueValidator(1900), validate_current_year])
     rating = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True,
                                  validators=[validators.MinValueValidator(1),
                                              validators.MaxValueValidator(10)])
@@ -54,5 +56,5 @@ class Movie(Content):
 
 
 class Series(Content):
-    seasons = models.PositiveIntegerField(null=False, blank=False)
-    episodes = models.PositiveIntegerField(null=False, blank=False)
+    seasons = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1)])
+    episodes = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1)])
