@@ -10,7 +10,7 @@ class FilterSortMixin:
         if genres:
             genres = genres.split(',')
             for genre in genres:
-                queryset = queryset.filter(genres__name=genre)
+                queryset = queryset.filter(genres__name__iexact=genre)
 
         sort = self.request.query_params.get('sort')
 
@@ -43,8 +43,14 @@ class ContentSortMixin:
             elif sort.lower() == 'oldest':
                 content_list.sort(key=lambda x: x.created_at)
             elif sort.lower() == 'highest_rating':
-                content_list.sort(key=lambda x: x.rating, reverse=True)
+                content_list.sort(key=lambda x: x.rating or 0, reverse=True)
             elif sort.lower() == 'lowest_rating':
-                content_list.sort(key=lambda x: x.rating)
+                content_list.sort(key=lambda x: x.rating or 0)
+            """
+            Specifying default value for the movie/series rating here is mandatory,
+            because upon creation, new movies/series do not have rating, meaning, it
+            is "Null", and sorting Null raises an error. Yet another built-in functionality
+            that queryset's sorting has out of the box..
+            """
 
         return content_list
