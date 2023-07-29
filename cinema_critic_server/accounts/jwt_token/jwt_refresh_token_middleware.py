@@ -18,7 +18,7 @@ class JwtRefreshMiddleware:
             if datetime.fromtimestamp(decoded['exp']) - datetime.now() < timedelta(minutes=5):
                 try:
                     """
-                     If its about to expire, we refresh it (I set it up to expire every 5 minutes,
+                     If its about to expire, we refresh it (I set it up to expire every 5 minutes,  
                      and to refresh for the next 60 minutes after receivign the initial token.)
                      """
                     refresh = RefreshToken(request.COOKIES.get('refresh'))

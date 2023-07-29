@@ -52,9 +52,10 @@ class Content(models.Model):
 
 
 class Movie(Content):
-    pass
+    type = models.CharField(default='movie', max_length=10)
 
 
 class Series(Content):
+    type = models.CharField(default='series', max_length=10)
     seasons = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1)])
     episodes = models.IntegerField(null=False, blank=False, validators=[validators.MinValueValidator(1)])

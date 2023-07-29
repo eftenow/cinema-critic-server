@@ -10,5 +10,5 @@ class ContentSerializer(serializers.Serializer):
     def to_representation(self, instance):
         if isinstance(instance, Movie):
             return MovieReadSerializer(instance).data
-        if isinstance(instance, Series):
+        elif isinstance(instance, Series):
             return SeriesReadSerializer(instance).data
