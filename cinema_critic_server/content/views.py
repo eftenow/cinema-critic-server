@@ -1,15 +1,18 @@
 from itertools import chain
 
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from cinema_critic_server.content.custom_mixins.filtration_mixin import FilterSortMixin, ContentSortMixin
-from cinema_critic_server.content.models import Movie, Series
+from cinema_critic_server.content.models import Movie, Series, Content
 from cinema_critic_server.content.pagination import MoviesSeriesPaginator
 from cinema_critic_server.content.serializers.serializers_content import ContentSerializer
-from cinema_critic_server.content.serializers.serializers_movies import MovieCreateEditSerializer, MovieReadSerializer
+from cinema_critic_server.content.serializers.serializers_movies import MovieCreateEditSerializer, MovieReadSerializer, \
+    SearchSeriesSerializer, SearchMovieSerializer
 from cinema_critic_server.content.serializers.serializers_series import SeriesCreateEditSerializer, SeriesReadSerializer
 
 """"Movies + Series views"""
@@ -101,3 +104,31 @@ class SeriesDetailView(RetrieveUpdateDestroyAPIView):
         instance.update_visits_count()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+"""Search view"""
+
+
+class SearchView(APIView):
+    def get(self, request):
+        query = request.query_params.get('q', None)
+
+        if not query:
+            return Response({"error": "No search text."}, status=400)
+        """
+        I cannot use directly the base class 'Content', because it is an abstract class
+        and an abstract class can't be instantiated nor use built-in functionalities(managers),
+        such as the 'objects' manager,which in this case is necessary here in order to retrieve
+        the searched objects. Instead I use both 'Movie' and 'Series' classes separately.
+        """
+
+        movie_queryset = Movie.objects.filter(Q(name__icontains=query))
+        series_queryset = Series.objects.filter(Q(name__icontains=query))
+
+        movie_serializer = SearchMovieSerializer(movie_queryset, many=True)
+        series_serializer = SearchSeriesSerializer(series_queryset, many=True)
+
+        results = (movie_serializer.data + series_serializer.data)[:6]
+
+        return Response(results)
+

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from cinema_critic_server.content.views import MovieListCreateView, MovieDetailView, SeriesListCreateView, \
-    SeriesDetailView, ContentListView
+    SeriesDetailView, ContentListView, SearchView
 
 urlpatterns = [
     path('all/', ContentListView.as_view(), name='content_list'),
@@ -18,5 +18,8 @@ urlpatterns = [
 
     path('series/<int:pk>/', SeriesDetailView.as_view(), name='series_detail'),
     # responsible for series details/edit/delete
+
+    path('search/', SearchView.as_view(), name='search_content'),
+    # responsible for returning searched content based on given queryset
 
 ]
