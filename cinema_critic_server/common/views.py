@@ -1,13 +1,22 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from itertools import chain
-from rest_framework import generics
-from rest_framework.response import Response
 
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from cinema_critic_server.common.helper_functions.get_content_model import get_model
 from cinema_critic_server.common.models import Genre
 from cinema_critic_server.common.serializers import GenreSerializer
 from cinema_critic_server.content.models import Movie, Series
+from cinema_critic_server.content.serializers.serializers_content import ContentSerializer
 from cinema_critic_server.content.serializers.serializers_movies import MovieReadSerializer
 from cinema_critic_server.content.serializers.serializers_series import SeriesReadSerializer
+
+UserModel = get_user_model()
 
 
 class ContentSearchListView(generics.ListAPIView):
@@ -34,3 +43,15 @@ class ContentSearchListView(generics.ListAPIView):
 class GenresListView(generics.ListAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+
+
+class BookmarkListView(generics.ListAPIView):
+    serializer_class = ContentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(UserModel, id=user_id)
+        return user.bookmarks.all()
+
+

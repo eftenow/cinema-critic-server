@@ -5,7 +5,7 @@ from django.contrib.auth.models import PermissionsMixin
 
 from cinema_critic_server.accounts.managers import AppUserManager
 from cinema_critic_server.accounts.validators import name_contains_only_letters
-from cinema_critic_server.content.models import Movie
+from cinema_critic_server.content.models import Movie, Content
 from cinema_critic_server.content.models import Series
 
 
@@ -88,8 +88,24 @@ class Profile(models.Model):
         primary_key=True,
         related_name='profile'
     )
-    bookmarked_movies = models.ManyToManyField(Movie, related_name='bookmarked_by', blank=True)
-    bookmarked_series = models.ManyToManyField(Series, related_name='bookmarked_by', blank=True)
+    bookmarks_movies = models.ManyToManyField(Movie, related_name='bookmarked_movies', blank=True)
+    bookmarks_series = models.ManyToManyField(Series, related_name='bookmarked_series', blank=True)
+
+    def add_bookmark(self, content):
+        if isinstance(content, Movie):
+            self.bookmarks_movies.add(content)
+        elif isinstance(content, Series):
+            self.bookmarks_series.add(content)
+        else:
+            raise ValueError("Invalid content type")
+
+    def remove_bookmark(self, content):
+        if isinstance(content, Movie):
+            self.bookmarks_movies.remove(content)
+        elif isinstance(content, Series):
+            self.bookmarks_series.remove(content)
+        else:
+            raise ValueError("Invalid content type")
 
     def get_full_name(self):
         if self.first_name and self.last_name:
