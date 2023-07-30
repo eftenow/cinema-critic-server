@@ -52,6 +52,30 @@ class BookmarkListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         user = get_object_or_404(UserModel, id=user_id)
-        return user.bookmarks.all()
+        profile = user.profile
+        bookmarks_movies = list(profile.bookmarks_movies.all())
+        bookmarks_series = list(profile.bookmarks_series.all())
+        return bookmarks_movies + bookmarks_series
 
 
+class BookmarkItemView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def post(request, content_type, content_id):
+        print('looooooo')
+        content_model = get_model(content_type)
+        print(f'Content model is: {content_model}')
+        content = get_object_or_404(content_model, id=content_id)
+        print('AADASDASDASDASDADA')
+        profile = request.user.profile
+        profile.add_bookmark(content)  # add_bookmarks / remove_bookmark are methods of 'Profile'
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def delete(request, content_type, content_id):
+        content_model = get_model(content_type)
+        content = get_object_or_404(content_model, id=content_id)
+        profile = request.user.profile
+        profile.remove_bookmark(content)
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
