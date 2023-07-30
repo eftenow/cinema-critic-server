@@ -63,11 +63,9 @@ class BookmarkItemView(APIView):
 
     @staticmethod
     def post(request, content_type, content_id):
-        print('looooooo')
         content_model = get_model(content_type)
-        print(f'Content model is: {content_model}')
         content = get_object_or_404(content_model, id=content_id)
-        print('AADASDASDASDASDADA')
+
         profile = request.user.profile
         profile.add_bookmark(content)  # add_bookmarks / remove_bookmark are methods of 'Profile'
         return Response({'status': 'ok'}, status=status.HTTP_200_OK)
@@ -76,6 +74,7 @@ class BookmarkItemView(APIView):
     def delete(request, content_type, content_id):
         content_model = get_model(content_type)
         content = get_object_or_404(content_model, id=content_id)
+
         profile = request.user.profile
         profile.remove_bookmark(content)
         return Response({'status': 'ok'}, status=status.HTTP_200_OK)

@@ -56,6 +56,9 @@ class MovieListCreateView(FilterSortMixin, ListCreateAPIView):
             return MovieCreateEditSerializer
         return MovieReadSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
 
 class MovieDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
@@ -89,6 +92,9 @@ class SeriesListCreateView(FilterSortMixin, ListCreateAPIView):
         queryset = super().get_queryset()
         sorted_and_filtered_queryset = self.get_filtered_sorted_queryset(queryset)
         return sorted_and_filtered_queryset
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 class SeriesDetailView(RetrieveUpdateDestroyAPIView):

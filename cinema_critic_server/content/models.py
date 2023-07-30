@@ -1,11 +1,13 @@
 from _decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+from cinema_critic_server import settings
 from cinema_critic_server.common.models import Genre
 from cinema_critic_server.content.validators import validate_current_year
 
@@ -27,7 +29,7 @@ class Content(models.Model):
     length = models.CharField(max_length=50)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
-
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     class Meta:
         abstract = True
 

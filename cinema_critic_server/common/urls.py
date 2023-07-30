@@ -5,5 +5,5 @@ urlpatterns = [
     path('search/', ContentSearchListView.as_view(), name='content_search'),
     path('genres/', GenresListView.as_view(), name='all_genres_list_'),
     path('bookmarks/<int:user_id>/', BookmarkListView.as_view(), name='bookmark-list'),
-    path('bookmark/<str:content_type>/<int:content_id>/', BookmarkItemView.as_view(), name='bookmark-item'),
+    path('bookmarks/<str:content_type>/<int:content_id>/', BookmarkItemView.as_view(), name='bookmark-item'),
 ]
