@@ -60,7 +60,7 @@ class MovieListCreateView(FilterSortMixin, ListCreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class MovieDetailsEditCreateDeleteView(RetrieveUpdateDestroyAPIView):
+class MovieDetailsEditDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     pagination_class = MoviesSeriesPaginator
 
@@ -108,7 +108,7 @@ class SeriesListCreateView(FilterSortMixin, ListCreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class SeriesDetailsEditCreateDeleteView(RetrieveUpdateDestroyAPIView):
+class SeriesDetailsEditDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Series.objects.all()
 
     def get_serializer_class(self):
