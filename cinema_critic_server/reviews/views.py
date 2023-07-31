@@ -37,6 +37,17 @@ class ReviewDetailsEditDeleteView(generics.RetrieveUpdateDestroyAPIView):
             if request.user != obj.user:
                 raise PermissionDenied('You can not edit this review')
 
+    def perform_update(self, serializer):
+        content_type = ContentType.objects.get(model=self.request.data['content_type'])
+        serializer.save(user=self.request.user, content_type=content_type)
+        instance = serializer.instance
+        instance.content_object.update_rating()
+
+    def perform_destroy(self, instance):
+        content_object = instance.content_object
+        instance.delete()
+        content_object.update_rating()
+
 
 class MovieReviewsListView(generics.ListAPIView):
     serializer_class = ReviewSerializer
