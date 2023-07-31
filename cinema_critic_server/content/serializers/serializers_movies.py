@@ -10,7 +10,7 @@ class MovieReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = ['id', 'name', 'year', 'rating', 'director', 'stars', 'visits', 'genres', 'trailer', 'image', 'length',
-                  'created_at', 'slug', 'description', 'type']
+                  'created_at', 'slug', 'description', 'type', 'creator']
 
 
 class MovieCreateEditSerializer(serializers.ModelSerializer):

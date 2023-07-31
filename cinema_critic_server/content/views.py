@@ -60,7 +60,7 @@ class MovieListCreateView(FilterSortMixin, ListCreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class MovieDetailView(RetrieveUpdateDestroyAPIView):
+class MovieDetailsEditCreateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     pagination_class = MoviesSeriesPaginator
 
@@ -74,6 +74,17 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
         instance.update_visits_count()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.creator != request.user:
+            return Response({"detail": "Not authorized to update this movie"}, status=status.HTTP_403_FORBIDDEN)
+
+        return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 """"Series views"""
@@ -97,7 +108,7 @@ class SeriesListCreateView(FilterSortMixin, ListCreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class SeriesDetailView(RetrieveUpdateDestroyAPIView):
+class SeriesDetailsEditCreateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Series.objects.all()
 
     def get_serializer_class(self):
@@ -110,6 +121,17 @@ class SeriesDetailView(RetrieveUpdateDestroyAPIView):
         instance.update_visits_count()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.creator != request.user:
+            return Response({"detail": "Not authorized to update this series"}, status=status.HTTP_403_FORBIDDEN)
+
+        return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 """Search view"""
@@ -137,4 +159,3 @@ class SearchView(APIView):
         results = (movie_serializer.data + series_serializer.data)[:6]
 
         return Response(results)
-
