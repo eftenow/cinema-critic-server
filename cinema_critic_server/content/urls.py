@@ -1,11 +1,14 @@
 from django.urls import path
 
 from cinema_critic_server.content.views import MovieListCreateView, MovieDetailsEditDeleteView, SeriesListCreateView, \
-    SeriesDetailsEditDeleteView, ContentListView, SearchView
+    SeriesDetailsEditDeleteView, ContentListView, SearchView, PopularContentView
 
 urlpatterns = [
     path('all/', ContentListView.as_view(), name='content_list'),
     # responsible for returning both movies and series at once
+
+    path('popular/', PopularContentView.as_view(), name='popular-content'),
+    # responsible for returning the most popular (most views) content at the moment
 
     path('movies/', MovieListCreateView.as_view(), name='movies_list_create'),
     # responsible for returning movies and creating new movie
@@ -21,5 +24,7 @@ urlpatterns = [
 
     path('search/', SearchView.as_view(), name='search_content'),
     # responsible for returning searched content based on given queryset
+
+
 
 ]

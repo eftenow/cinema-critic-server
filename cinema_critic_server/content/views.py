@@ -1,6 +1,7 @@
 from itertools import chain
 
 from django.db.models import Q
+from django.db.models import F
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -15,8 +16,7 @@ from cinema_critic_server.content.serializers.serializers_content import Content
 from cinema_critic_server.content.serializers.serializers_movies import MovieCreateEditSerializer, MovieReadSerializer
 from cinema_critic_server.content.serializers.serializers_series import SeriesCreateEditSerializer, SeriesReadSerializer
 
-""""Movies + Series views"""
-
+""""Content (Movies + Series) views"""
 
 class ContentListView(ContentSortMixin, FilterSortMixin, ListAPIView):
     serializer_class = ContentSerializer
@@ -36,6 +36,21 @@ class ContentListView(ContentSortMixin, FilterSortMixin, ListAPIView):
         sorted_and_filtered_content = self.sort_all_content(filtered_content, sort_param)
 
         return sorted_and_filtered_content
+
+
+class PopularContentView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        top_movies = Movie.objects.all().annotate(content_type=F('type')).order_by('-visits')[:5]
+        top_series = Series.objects.all().annotate(content_type=F('type')).order_by('-visits')[:5]
+
+        combined = list(chain(top_movies, top_series))
+        combined_sorted = sorted(combined, key=lambda content: content.visits, reverse=True)[:5]
+
+        # You will need to serialize these objects to convert them to JSON response
+        serializer_data = ContentSerializer(combined_sorted, many=True).data
+
+        return Response(serializer_data)
 
 
 """"Movie views"""
