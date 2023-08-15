@@ -1,5 +1,6 @@
 import jwt
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.http import Http404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -8,15 +9,12 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
 from cinema_critic_server.accounts.custom_permissions.is_owner import IsOwner
-from cinema_critic_server.accounts.models import Profile
 from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, \
     UserDetailsSerializer, EditUserSerializer, UsersListSerializer
 from cinema_critic_server.accounts.view_validators import authenticate_user
+from rest_framework_simplejwt.tokens import RefreshToken
 
 UserModel = get_user_model()
-
-# Create your views here.
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class AllUsersListView(generics.ListAPIView):
@@ -35,6 +33,10 @@ class RegisterUserView(generics.CreateAPIView):
         user = serializer.save()
 
         user.set_password(serializer.validated_data['password'])
+
+        regular_user_group, created = Group.objects.get_or_create(name='Regular User')
+        user.groups.add(regular_user_group)
+
         user.save()
 
         tokens = RefreshToken.for_user(user)
@@ -93,6 +95,9 @@ class EditUserProfileView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_object(self):
+        """
+           only return the authenticated user's profile
+        """
         return self.request.user
 
     def get(self, request, *args, **kwargs):
