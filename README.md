@@ -35,7 +35,7 @@
 <p>To set up and run this project locally, follow these steps:</p>
 <ol>
   <li>Clone the repository: <code>git clone https://github.com/your-username/your-repo-url.git</code></li>
-  <li>Get to the project directory: <code>cd your-repo-name</code></li>
+  <li>Get to the project directory</li>
   <li>Install the requirements: <code>pip install -r requirements.txt</code></li>
   <li>Run the migrations: <code>python manage.py migrate</code></li>
   <li>Start the server: <code>python manage.py runserver</code></li>
@@ -53,10 +53,10 @@ Response:
     "year": 2000,
     "rating": "4.93",
     "director": "Test Director",
-    "stars": ["Test star one", "Test star two"],
+    "stars": ["Marlon Brando", "Al Pacino"],
     "visits": 5,
     "genres": [
-        "Adventure",
+        "Action",
         "Drama"
     ],
     "trailer": "https://youtu.be/7qUw0UHREtg",
