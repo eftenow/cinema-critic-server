@@ -10,9 +10,10 @@ from cinema_critic_server.content.models import Series
 
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
+    REQUIRED_FIELDS = ['email']
     email = models.EmailField(
         unique=True,
-        max_length=20,
+        max_length=50,
         validators=[validators.MinLengthValidator(2)],
     )
     username = models.CharField(

@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
-from cinema_critic_server.accounts.custom_permissions.is_owner import IsOwner
 from cinema_critic_server.accounts.serializers import RegisterUserSerializer, LoginUserSerializer, \
     UserDetailsSerializer, EditUserSerializer, UsersListSerializer
 from cinema_critic_server.accounts.view_validators import authenticate_user
@@ -27,6 +26,9 @@ class RegisterUserView(generics.CreateAPIView):
     serializer_class = RegisterUserSerializer
 
     def create(self, request, *args, **kwargs):
+        if 'email' not in request.data or not request.data['email']:
+            request.data['email'] = 'default@email.com'  # set the default email
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -91,16 +93,27 @@ class DetailsUserView(APIView):
 
 class EditUserProfileView(generics.UpdateAPIView):
     serializer_class = EditUserSerializer
-    lookup_field = 'pk'
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated]
+    queryset = UserModel.objects.all()
 
     def get_object(self):
         """
-           only return the authenticated user's profile
+        returns the authenticated user's profile unless an admin is
+        trying to access another user's profile.
         """
+        if self.request.user.groups.filter(name='Administrator').exists() and 'pk' in self.kwargs:
+            try:
+                # returns the user specified by 'pk'
+                return UserModel.objects.get(pk=self.kwargs['pk'])
+            except UserModel.DoesNotExist:
+                raise Http404("User not found")
+
         return self.request.user
 
     def get(self, request, *args, **kwargs):
+        """
+        returns the serialized data of the user that is returned by get_object
+        """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -110,7 +123,21 @@ class DeleteUserView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return self.request.user  # ensures that only the account can delete the account
+        """
+        returns the authenticated user's profile unless an admin is
+        trying to access another user's profile.
+        """
+        if self.request.user.groups.filter(name='Administrator').exists() and 'pk' in self.kwargs:
+            try:
+                return UserModel.objects.get(pk=self.kwargs['pk'])
+            except UserModel.DoesNotExist:
+                raise Http404("User not found")
+
+        """
+        if the user trying to edit is not an admin, this returns the currently
+        logged-in user's profile, even if he's trying to access another user's profile
+        """
+        return self.request.user
 
 
 class LogoutUserView(APIView):
