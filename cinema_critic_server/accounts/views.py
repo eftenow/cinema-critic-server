@@ -26,9 +26,6 @@ class RegisterUserView(generics.CreateAPIView):
     serializer_class = RegisterUserSerializer
 
     def create(self, request, *args, **kwargs):
-        if 'email' not in request.data or not request.data['email']:
-            request.data['email'] = 'default@email.com'  # set the default email
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
