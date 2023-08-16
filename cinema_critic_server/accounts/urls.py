@@ -1,5 +1,6 @@
 from django.urls import path
 
+from cinema_critic_server.accounts import views_admin
 from cinema_critic_server.accounts.views import RegisterUserView, LoginUserView, LogoutUserView, DetailsUserView, \
     EditUserProfileView, CheckUserIsAuthenticatedView, AllUsersListView, DeleteUserView
 
@@ -12,5 +13,9 @@ urlpatterns = [
     path('details/<int:pk>/', DetailsUserView.as_view(), name='user_details'),
     path('edit/<int:pk>/', EditUserProfileView.as_view(), name='user_edit_info'),
     path('delete/<int:pk>/', DeleteUserView.as_view(), name='user_edit_info'),
-    path('authenticated/', CheckUserIsAuthenticatedView.as_view(), name='check_if_user_authenticated')
+    path('authenticated/', CheckUserIsAuthenticatedView.as_view(), name='check_if_user_authenticated'),
+
+
+    # Admin views
+    path('api/get-users/', views_admin.get_users, name='get_users'),
 ]
