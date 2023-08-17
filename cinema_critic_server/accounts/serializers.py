@@ -52,13 +52,19 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserDetailsSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
+    role = serializers.SerializerMethodField()
 
     class Meta:
         model = UserModel
-        fields = ['id', 'username', 'email', 'password', 'profile']
+        fields = ['id', 'username', 'email', 'password', 'profile', 'role']
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+    @staticmethod
+    def get_role(obj):
+        role = obj.groups.all().first()
+        return role.name if role else "No Role"
 
 
 class EditUserSerializer(serializers.ModelSerializer):
