@@ -13,7 +13,7 @@ from cinema_critic_server.content.validators import validate_current_year
 
 
 class Content(models.Model):
-    name = models.CharField(max_length=40, validators=[validators.MinLengthValidator(2)])
+    name = models.CharField(max_length=60, validators=[validators.MinLengthValidator(2)])
     year = models.IntegerField(null=False, blank=False,
                                validators=[validators.MinValueValidator(1900), validate_current_year])
     rating = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True,

@@ -26,6 +26,7 @@ def get_users(request):
         role_name = role.name if role else "No Role"
 
         user_data = {
+            'id': user.id,
             'username': user.username,
             'email': user.email,
             'role': role_name

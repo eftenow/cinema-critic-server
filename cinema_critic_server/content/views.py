@@ -93,7 +93,9 @@ class MovieDetailsEditDeleteView(RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        if instance.creator != request.user:
+        user_is_administrator = request.user.groups.filter(name='Administrator').exists()
+
+        if instance.creator != request.user and not user_is_administrator:
             return Response({"detail": "Not authorized to update this movie"}, status=status.HTTP_403_FORBIDDEN)
 
         return super().update(request, *args, **kwargs)
@@ -140,7 +142,9 @@ class SeriesDetailsEditDeleteView(RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        if instance.creator != request.user:
+        user_is_administrator = request.user.groups.filter(name='Administrator').exists()
+
+        if instance.creator != request.user and not user_is_administrator:
             return Response({"detail": "Not authorized to update this series"}, status=status.HTTP_403_FORBIDDEN)
 
         return super().update(request, *args, **kwargs)
