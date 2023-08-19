@@ -8,7 +8,7 @@ UserModel = get_user_model()
 
 
 class Review(models.Model):
-    review_title = models.CharField(max_length=30, blank=True, null=True)
+    review_title = models.CharField(max_length=60, blank=True, null=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True)
     rating = models.IntegerField()
