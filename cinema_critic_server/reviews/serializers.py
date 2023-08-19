@@ -13,7 +13,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ('user',)
+        read_only_fields = ('user', )
 
     def validate_content_type(self, value):
         if value.model not in ['movie', 'series']:

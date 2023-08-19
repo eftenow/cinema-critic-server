@@ -34,12 +34,13 @@ class ReviewDetailsEditDeleteView(generics.RetrieveUpdateDestroyAPIView):
     def check_object_permissions(self, request, obj):
         super().check_object_permissions(request, obj)
         if request.method == 'PUT' or request.method == 'DELETE':
-            if request.user != obj.user:
+            user_is_administrator = request.user.groups.filter(name='Administrator').exists()
+            if not user_is_administrator and request.user != obj.user:
                 raise PermissionDenied('You can not edit this review')
 
     def perform_update(self, serializer):
         content_type = ContentType.objects.get(model=self.request.data['content_type'])
-        serializer.save(user=self.request.user, content_type=content_type)
+        serializer.save()
         instance = serializer.instance
         instance.content_object.update_rating()
 
