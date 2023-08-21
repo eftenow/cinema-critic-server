@@ -17,5 +17,5 @@ urlpatterns = [
 
 
     # Admin views
-    path('api/get-users/', views_admin.get_users, name='get_users'),
+    path('api/get-users/', views_admin.AdminUsersListView.as_view(), name='get_users'),
 ]
