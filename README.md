@@ -68,9 +68,3 @@ Response:
 }
 </code></pre>
 <hr>
-<h2>Tests</h2>
-<p>Unit tests and integration tests will be added to the project in the near future.</p>
-<hr>
-<h2>Deployment</h2>
-<p>The API will be deployed in the near future, for now you can check the running version of my project, which includes front-end built entierly with vanilla JS and uses back4app's backend free services <a href="https://cinema-critics.web.app/">here</a>.</p>
-<hr>
