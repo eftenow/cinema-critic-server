@@ -2,6 +2,7 @@
 <h1>Cinema Critic Server</h1>
 <p>
   This is the backend of the Cinema Critic project. The backend is a RESTful API built with Django REST API. The frontend, built on vanilla JavaScript, interacts with this backend to provide a complete user experience.
+  You can find the front-end repository <a href='https://github.com/eftenow/cinema-critic-project' target='_blank' rel='noopener noreferrer'>here</a>.</p>
 </p>
 <hr>
 
